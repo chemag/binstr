@@ -1,3 +1,5 @@
+// Copyright Google Inc. Apache 2.0.
+
 #ifndef MCASTCAPTURE_UTILS_BINSTR_
 #define MCASTCAPTURE_UTILS_BINSTR_
 
