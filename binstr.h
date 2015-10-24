@@ -1,7 +1,7 @@
 // Copyright Google Inc. Apache 2.0.
 
-#ifndef MCASTCAPTURE_UTILS_BINSTR_
-#define MCASTCAPTURE_UTILS_BINSTR_
+#ifndef BINSTR_
+#define BINSTR_
 
 // binstr is a generic language to define binary strings (char *)
 // using a combination of decimal, hexadecimal, octal, and binary
@@ -48,4 +48,4 @@ int binstr_parse(const char *in, char *buf, int buflen);
 int binstr_snprintf(const char *in, char *buf, int buflen, ...)
     __attribute__((format(printf, 1, 4)));
 
-#endif  // MCASTCAPTURE_UTILS_BINSTR_
+#endif  // BINSTR_
