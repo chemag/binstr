@@ -40,7 +40,7 @@ And then read into an actual binary buffer using:
 Note that bitlen is the number of bits read, which may not be a multiple
 of 8.
 
-`binstr\_snprintf()` adds a snprintf-like preprocessor.
+`binstr_snprintf()` adds a snprintf-like preprocessor.
 
 See go/binstr for more information.
 
