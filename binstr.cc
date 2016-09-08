@@ -188,7 +188,9 @@ int binstr_parse(const char *in, char *buf, int buflen) {
     }
   }
   // zero all bits until the next byte
-  bit_set(buf, bitindex, 0, 8 - (bitindex % 8));
+  int bits_left = bitindex % 8;
+  if (bits_left)
+    bit_set(buf, bitindex, 0, 8 - bits_left);
 
   return bitindex;
 }

@@ -10,13 +10,13 @@
 
 #include "binstr.h"
 
+#include <gtest/gtest.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <sstream>
 
-#include <gtest/gtest.h>
 
 
 const char kBinDoc1[] = R"(
@@ -203,6 +203,17 @@ TEST(BinstrTest, binstr_ip_header) {
   int bitlen = binstr_parse(kIpHeader, binbuf, sizeof(binbuf));
   EXPECT_EQ(bitlen, 8 * (sizeof(kIpHeaderBin) - 1));
   EXPECT_EQ(0, memcmp(binbuf, kIpHeaderBin, (sizeof(kIpHeaderBin) - 1)));
+}
+
+TEST(BinstrTest, binstr_check_overwrite) {
+  const char format_str[] = "{24}%d";
+  char binbuf[4] = {'a', 'b', 'c', 'd'};
+  int bitlen = binstr_snprintf(format_str, binbuf, sizeof(binbuf), 0);
+  EXPECT_EQ(8 * 3, bitlen);
+  EXPECT_EQ(binbuf[0], 0x00);
+  EXPECT_EQ(binbuf[1], 0x00);
+  EXPECT_EQ(binbuf[2], 0x00);
+  EXPECT_EQ(binbuf[3], 'd');
 }
 
 TEST(BinstrTest, binstr_snprintf) {
