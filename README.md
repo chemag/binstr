@@ -42,5 +42,5 @@ of 8.
 
 `binstr_snprintf()` adds a snprintf-like preprocessor.
 
-See go/binstr for more information.
+See the [design doc](design.md) for more information.
 
