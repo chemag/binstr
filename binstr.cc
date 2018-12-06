@@ -225,7 +225,7 @@ int binstr_snprintf(const char *in, char *buf, int buflen, ...) {
     return ret;
   }
 
-  if (ret > sizeof(format)) {
+  if (ret > static_cast<int>(sizeof(format))) {
     // insufficient space in format
     return -1;
   }
@@ -236,7 +236,7 @@ int binstr_snprintf(const char *in, char *buf, int buflen, ...) {
 // trim from start
 static void ltrim(std::string *s) {
   int pos = s->find_first_not_of(" \n\r\t");
-  if (pos == std::string::npos) {
+  if (pos == static_cast<int>(std::string::npos)) {
     s->erase();
   } else {
     s->erase(0, pos);
@@ -246,7 +246,7 @@ static void ltrim(std::string *s) {
 // trim from end
 static void rtrim(std::string *s) {
   int pos = s->find_last_not_of(" \n\r\t");
-  if (pos == std::string::npos) {
+  if (pos == static_cast<int>(std::string::npos)) {
     s->erase();
   } else {
     s->erase(pos + 1);

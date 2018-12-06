@@ -1,6 +1,6 @@
 CPP=g++
 CPPFLAGS=-g -O0 -pedantic -Wall -Werror -Wswitch-enum -Wextra \
-    -Wno-sign-compare -Wno-unused-parameter
+    -Wno-unused-parameter
 CPPFLAGS+=-std=c++0x
 LDFLAGS=-lgtest_main -lgtest -lrt -lpthread
 
