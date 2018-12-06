@@ -31,20 +31,23 @@ static void trim(std::string *s);
 // set <len> bits at <bitindex> position in buf using the
 // <len> right-most (least-significant) bits in <val>
 static void bit_set(char *buf, int bitindex, uint8_t val, int len) {
-  if (len == 0)
+  if (len == 0) {
     return;
+	}
   uint8_t mask;
   uint8_t *byte = (uint8_t *)(buf + bitindex / 8);
   int lshift = 8 - len - (bitindex % 8);
-  if (lshift >= 0)
+  if (lshift >= 0) {
     mask = ((1 << len) - 1) << lshift;
-  else
+  } else {
     mask = ((1 << len) - 1) >> (-lshift);
+  }
   *byte &= ~mask;
-  if (lshift >= 0)
+  if (lshift >= 0) {
     *byte |= (val << lshift) & mask;
-  else
+  } else {
     *byte |= (val >> (-lshift)) & mask;
+  }
   if (lshift < 0) {
     byte = (uint8_t *)(buf + bitindex / 8 + 1);
     lshift += 8;
@@ -89,18 +92,22 @@ static int sscanf_item(const std::string &item, int bitlen,
 
     // parse bytes
     for (unsigned int i = start_index; i < item.length(); ++i) {
-      if (digitlen == 4 && !isxdigit(item.at(i)))
+      if (digitlen == 4 && !isxdigit(item.at(i))) {
         // hex parsing error
         return -1;
-      if (digitlen == 1 && item.at(i) != '0' && item.at(i) != '1')
+      }
+      if (digitlen == 1 && item.at(i) != '0' && item.at(i) != '1') {
         // bin parsing error
         return -1;
-      if (digitlen == 3 && (item.at(i) < '0' || item.at(i) > '7'))
+      }
+      if (digitlen == 3 && (item.at(i) < '0' || item.at(i) > '7')) {
         // oct parsing error
         return -1;
-      if (bitindex + biti + digitlen > buflen * 8)
+      }
+      if (bitindex + biti + digitlen > buflen * 8) {
         // not enough space
         return -1;
+      }
       uint8_t val = isdigit(item.at(i)) ? (item.at(i) - '0') :
                     (tolower(item.at(i)) - 'a') + 10;
       int len = digitlen;
@@ -115,12 +122,14 @@ static int sscanf_item(const std::string &item, int bitlen,
     }
   } else {
     // decimal bytes
-    if (bitlen == -1)
+    if (bitlen == -1) {
       // decimal requires a fixed bit length
       return -1;
-    if (bitlen < 0 || bitlen > 64)
+    }
+    if (bitlen < 0 || bitlen > 64) {
       // strtoull only accepts 64-bit integers
       return -1;
+    }
     uint64_t value;
     value = strtoull(item.c_str(), NULL, 10);
     // set value (up to) 8-bits at a time
@@ -129,10 +138,11 @@ static int sscanf_item(const std::string &item, int bitlen,
       uint8_t mask = 0xff >> (8 - len);
       int rshift = i - 8;
       uint8_t val = 0;
-      if (rshift >= 0)
+      if (rshift >= 0) {
         val = (value >> rshift) & mask;
-      else
+      } else {
         val = value & mask;
+      }
       bit_set(buf, bitindex+biti, val, len);
       biti += len;
     }
@@ -153,44 +163,51 @@ int binstr_parse(const char *in, char *buf, int buflen) {
     ++line_number;
     // trim lines
     trim(&line);
-    if (line.empty())
+    if (line.empty()) {
       continue;
+    }
     std::stringstream iss(line);
     std::string item;
     // TODO(chema): delim must support any blank
     while (std::getline(iss, item, ' ')) {
-      if (item.empty())
+      if (item.empty()) {
         continue;
+      }
       // a '#' causes the rest of the line to be a comment
-      if (item.at(0) == '#')
+      if (item.at(0) == '#') {
         // comment
         break;
+      }
       // parse item
       int index = 0;
       // look for repeated items ("*<rep>*item")
       int rep = 1;
-      if (sscanf(item.c_str(), "*%d*%n", &rep, &index) < 1)
+      if (sscanf(item.c_str(), "*%d*%n", &rep, &index) < 1) {
         rep = 1;
+      }
       int bitlen = -1;
       // look for an explicit length ("{len}...")
       int i = 0;
-      if (sscanf(item.substr(index).c_str(), "{%d}%n", &bitlen, &i) < 1)
+      if (sscanf(item.substr(index).c_str(), "{%d}%n", &bitlen, &i) < 1) {
         bitlen = -1;
+      }
       index += i;
       for (int j = 0; j < rep; ++j) {
         int ret = sscanf_item(item.substr(index).c_str(), bitlen, buf, buflen,
                               bitindex);
-        if (ret < 0)
+        if (ret < 0) {
           // parse error
           return -1;
+        }
         bitindex += ret;
       }
     }
   }
   // zero all bits until the next byte
   int bits_left = bitindex % 8;
-  if (bits_left)
+  if (bits_left) {
     bit_set(buf, bitindex, 0, 8 - bits_left);
+  }
 
   return bitindex;
 }
@@ -203,13 +220,15 @@ int binstr_snprintf(const char *in, char *buf, int buflen, ...) {
   int ret = vsnprintf(format, sizeof(format), in, va);
   va_end(va);
 
-  if (ret < 0)
+  if (ret < 0) {
     // vsnprintf error
     return ret;
+  }
 
-  if (ret > sizeof(format))
+  if (ret > sizeof(format)) {
     // insufficient space in format
     return -1;
+  }
 
   return binstr_parse(format, buf, buflen);
 }
@@ -217,19 +236,21 @@ int binstr_snprintf(const char *in, char *buf, int buflen, ...) {
 // trim from start
 static void ltrim(std::string *s) {
   int pos = s->find_first_not_of(" \n\r\t");
-  if (pos == std::string::npos)
+  if (pos == std::string::npos) {
     s->erase();
-  else
+  } else {
     s->erase(0, pos);
+  }
 }
 
 // trim from end
 static void rtrim(std::string *s) {
   int pos = s->find_last_not_of(" \n\r\t");
-  if (pos == std::string::npos)
+  if (pos == std::string::npos) {
     s->erase();
-  else
+  } else {
     s->erase(pos + 1);
+  }
 }
 
 // trim from both ends
