@@ -1,0 +1,12 @@
+*~
+.cproject
+*.gcda
+*.gcno
+*.info
+*.[oa]
+*.pb.cc
+*.pb.h
+.protos_done
+*.so
+*.swp
+binstr_test
